@@ -14,7 +14,7 @@ import urllib.request
 import urllib.parse
 import bs4
 
-def talk(audio):
+def talkJarvis(audio):
     "speaks audio passed as argument"
 
     print(audio)
@@ -62,7 +62,7 @@ def jarvis(command):
         "Excuse me?",
         "Can you repeat it please?",
     ]
-    "if statements for executing commands"
+    """if statements for executing commands"""
 
     # Search on Google
     if 'open google and search' in command:
@@ -73,7 +73,7 @@ def jarvis(command):
         if reg_ex:
             subgoogle = reg_ex.group(1)
             url = url + 'r/' + subgoogle
-        talk('Okay!')
+        talkJarvis('Okay!')
         driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver')
         driver.get('https://www.google.com')
         search = driver.find_element_by_name('q')
@@ -82,32 +82,25 @@ def jarvis(command):
 
     #send email
     elif 'email' in command:
-        talk('What is the subject')
-        time.sleep(3)
-        subject = myCommand
-        talk('What should I say')
-        message = myCommand()
-        content = 'Subject: {}\n\n{}'.format(subject, message)
+        talkJarvis('Who would you like to send this email?')
+        recipient = myCommand()
 
-        #initialize gmail SMTP
-        mail = smtplib.SMTP('smtp.gmail.com', 587)
+        if 'university email' in recipient:
+            email_address = 'kaarthigeswaran@gmail.com'
+            email_password = 'text' #leaving empty for privacy concerns
+            talkJarvis('What you would like to say in the email')
+            content = myCommand()
+            mail = smtplib.SMTP('smtp.gmail.com', 587)
+            mail.ehlo()
+            mail.starttls()
+            mail.login(email_address, email_password)
+            mail.sendmail('sender_email', 'receiver_email', content) #will update with a dictionary/list of contacts
+            mail.close()
+            talkJarvis('Email has been sent successfully.')
 
-        #identify to SMTP server
-        mail.ehlo()
-
-        #encrypt seesion
-        mail.starttls()
-
-        #login
-        mail.login('mail', 'password') #login creds
-
-        #send message
-        mail.sendmail('FROM', 'TO', content)
-
-        #end mail connection
-        mail.close()
-
-        talk('Email sent.')
+        else:
+            talkJarvis('I don\'t know what you mean!')
+            continue
 
 #search in wikipedia (e.g. Can you search in wikipedia apples)
     elif 'wikipedia' in command:
@@ -156,6 +149,8 @@ def jarvis(command):
     elif 'Jarvis stands for' or 'Jarvis meaning' or 'meaning of Jarvis' in command:
         talk('My name is an abbreviation that stands for Just A Rather Very Intelligent System')
         time.sleep(3)
+    elif 'who created you' or 'why you were created' in command:
+        talk('Mr Kaarthigeswaran created me to assist him with his daily affairs and also demonstrate how powerful Python can be')
 
     else:
         error = random.choice(errors)
