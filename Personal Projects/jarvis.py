@@ -13,6 +13,7 @@ import requests
 import urllib.request
 import urllib.parse
 import bs4
+import datetime
 
 def talkJarvis(audio):
     "speaks audio passed as argument"
@@ -140,6 +141,12 @@ def jarvis(command):
             webbrowser.open("http://www.youtube.com/watch?v={}".format(search_results[0]))
             pass
 
+    #time
+    elif 'time' in command:
+        now = datetime.datetime.now()
+        talkJarvis('It is %d %d' %(now.hour, now.minute))
+
+    #conversation
     elif 'hello' in command:
         talk('Hello! I am Jarvis. How can I help you?')
         time.sleep(3)
