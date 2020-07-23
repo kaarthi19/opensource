@@ -15,6 +15,8 @@ import urllib.parse
 import bs4
 import datetime
 
+from pyowm import OWM
+
 def talkJarvis(audio):
     "speaks audio passed as argument"
 
@@ -65,7 +67,7 @@ def jarvis(command):
     ]
     """if statements for executing commands"""
 
-    # Search on Google
+    #Search on Google
     if 'open google and search' in command:
         reg_ex = re.search('open google and search (.*)', command)
         search_for = command.split("search",1)[1]
@@ -103,7 +105,7 @@ def jarvis(command):
             talkJarvis('I don\'t know what you mean!')
             continue
 
-#search in wikipedia (e.g. Can you search in wikipedia apples)
+    #search in wikipedia
     elif 'wikipedia' in command:
         reg_ex = re.search('wikipedia (.+)', command)
         if reg_ex:
@@ -127,8 +129,19 @@ def jarvis(command):
     elif 'stop' in command:
         mixer.music.stop()
 
-#search videos on Youtube
+    #weather
+    elif 'current weather' in command:
+        reg_ex = re.search('current weather in (.*)', command)
+        if reg_ex:
+            city = reg_ex.group(1)
+            owm = OWM(API_key='b3097ca6c1fa60c4014a3ef599d19f1e')
+            obs = owm.weather_at_place(city)
+            w = obs.get_weather()
+            k = w.get_status()
+            x = w.get_temperature(unit='celsius')
+            talkJarvis('Current weather in %s is %s. The maximum temperature is %0.2f and the minimum temperature is %0.2f degree celcius' %(city, k, x['temp_max'], x['temp_min']))
 
+    #search videos on Youtube
     elif 'youtube' in command:
         talk('OK!')
         reg_ex = re.search('youtube (.+)', command)
